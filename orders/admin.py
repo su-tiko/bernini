@@ -47,8 +47,9 @@ class OrderAdmin(admin.ModelAdmin):
         OrderInline
     ]
 
-    def save_related(self, request, form, formsets, change):
-        super().save_related(request, form, formsets, change)
+    def response_post_save_add(self, request, obj):
+        obj.send_email()
+        return super().response_post_save_add(request, obj)
 
 
 class UserOrderAdmin(OrderAdmin):

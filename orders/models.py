@@ -6,7 +6,6 @@ from django.core.mail import EmailMessage
 from django.db import models
 from django.contrib.auth import models as auth_models
 from django.db.models import Q
-from django.db.models.signals import post_save
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -57,7 +56,7 @@ class Order(models.Model):
             ]
         )
         email.attach('order.csv', self.get_csv(), 'text/csv')
-        email.send(fail_silently=True)
+        email.send(fail_silently=False)
 
     def __str__(self):
         return "Order #{id}. {price}€".format(id=self.pk, price=self.total_price)
