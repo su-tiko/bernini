@@ -1,0 +1,227 @@
+paths:
+  /api/products/{id}/:
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - name
+              - description
+              - price
+              properties:
+                description:
+                  type: string
+                price:
+                  type: number
+                  minimum: -1000000
+                  multipleOf: 0.01
+                  maximum: 1000000
+                name:
+                  type: string
+                  maxLength: 125
+      parameters:
+      - required: true
+        description: A unique integer value identifying this Product.
+        schema:
+          type: string
+        name: id
+        in: path
+      operationId: updateProduct
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                required:
+                - name
+                - description
+                - price
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: integer
+                    readOnly: true
+                  price:
+                    type: number
+                    minimum: -1000000
+                    multipleOf: 0.01
+                    maximum: 1000000
+                  name:
+                    type: string
+                    maxLength: 125
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                description:
+                  type: string
+                price:
+                  type: number
+                  minimum: -1000000
+                  multipleOf: 0.01
+                  maximum: 1000000
+                name:
+                  type: string
+                  maxLength: 125
+      parameters:
+      - required: true
+        description: A unique integer value identifying this Product.
+        schema:
+          type: string
+        name: id
+        in: path
+      operationId: partial_updateProduct
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                required:
+                - name
+                - description
+                - price
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: integer
+                    readOnly: true
+                  price:
+                    type: number
+                    minimum: -1000000
+                    multipleOf: 0.01
+                    maximum: 1000000
+                  name:
+                    type: string
+                    maxLength: 125
+    delete:
+      parameters:
+      - required: true
+        description: A unique integer value identifying this Product.
+        schema:
+          type: string
+        name: id
+        in: path
+      operationId: destroyProduct
+      responses:
+        '204':
+          description: ''
+    get:
+      parameters:
+      - required: true
+        description: A unique integer value identifying this Product.
+        schema:
+          type: string
+        name: id
+        in: path
+      operationId: retrieveProduct
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                required:
+                - name
+                - description
+                - price
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: integer
+                    readOnly: true
+                  price:
+                    type: number
+                    minimum: -1000000
+                    multipleOf: 0.01
+                    maximum: 1000000
+                  name:
+                    type: string
+                    maxLength: 125
+  /api/products/:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - name
+              - description
+              - price
+              properties:
+                description:
+                  type: string
+                price:
+                  type: number
+                  minimum: -1000000
+                  multipleOf: 0.01
+                  maximum: 1000000
+                name:
+                  type: string
+                  maxLength: 125
+      parameters: []
+      operationId: createProduct
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                required:
+                - name
+                - description
+                - price
+                properties:
+                  description:
+                    type: string
+                  id:
+                    type: integer
+                    readOnly: true
+                  price:
+                    type: number
+                    minimum: -1000000
+                    multipleOf: 0.01
+                    maximum: 1000000
+                  name:
+                    type: string
+                    maxLength: 125
+    get:
+      parameters: []
+      operationId: listProducts
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - name
+                  - description
+                  - price
+                  properties:
+                    description:
+                      type: string
+                    id:
+                      type: integer
+                      readOnly: true
+                    price:
+                      type: number
+                      minimum: -1000000
+                      multipleOf: 0.01
+                      maximum: 1000000
+                    name:
+                      type: string
+                      maxLength: 125
+info:
+  title: 'Bernini API'
+  version: '1.0.0'
+openapi: 3.0.2

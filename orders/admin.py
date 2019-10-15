@@ -26,19 +26,19 @@ class UserOrderInline(admin.TabularInline):
         return request.user.is_active
 
     def has_change_permission(self, request, obj=None):
-        return request.user.is_active and (obj is None or obj.client == request.user)
+        return request.user.is_staff or request.user.is_active and (obj is None or obj.client == request.user)
 
     def has_add_permission(self, request, obj=None):
-        return request.user.is_active and (obj is None or obj.client == request.user)
+        return request.user.is_staff or request.user.is_active and (obj is None or obj.client == request.user)
 
     def has_delete_permission(self, request, obj=None):
-        return request.user.is_active and (obj is None or obj.client == request.user)
+        return request.user.is_staff or request.user.is_active and (obj is None or obj.client == request.user)
 
     def has_view_permission(self, request, obj=None):
-        return request.user.is_active and (obj is None or obj.client == request.user)
+        return request.user.is_staff or request.user.is_active and (obj is None or obj.client == request.user)
 
     def has_view_or_change_permission(self, request, obj=None):
-        return request.user.is_active and (obj is None or obj.client == request.user)
+        return request.user.is_staff or request.user.is_active and (obj is None or obj.client == request.user)
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -55,7 +55,11 @@ class UserOrderAdmin(OrderAdmin):
     ]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).filter(client=request.user)
+        qs = super().get_queryset(request)
+        if request.user.is_staff:
+            return qs
+
+        return qs.filter(client=request.user)
 
     def save_model(self, request, obj, form, change):
         obj.client = request.user
