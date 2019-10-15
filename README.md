@@ -25,3 +25,10 @@ As it is a demo app there are many things that are not good for a production env
 - We should get some config from environment to follow factor12.
 - Email backend is set to Console.
 - Missing unit tests.
+
+## Docs
+OpenAPI documentation is available for the API endpoint. It is available at:
+`openapi-schema.yml`
+
+And it is also included a basic Swagger-UI webpage for viewing it. It can be found running the project on:
+`http://localhost:8000/api/docs`
