@@ -1,3 +1,4 @@
+# coding: utf-8
 from django.core import validators
 from django.db import models
 from django.contrib.auth import models as auth_models
@@ -8,13 +9,15 @@ class Order(models.Model):
     client = models.ForeignKey(auth_models.User, on_delete=models.PROTECT, related_name='orders')
     created = models.DateTimeField(auto_now_add=True)
 
-    products = models.ManyToManyField('products.Product',
-                                      through='OrderLine',
-                                      related_name='orders')
+    products = models.ManyToManyField('products.Product', through='OrderLine', related_name='orders')
 
     @property
     def total_price(self):
-        return sum([p.total for p in self.products.all()])
+        return sum([line.total for line in self.lines.all()])
+
+    @property
+    def total_items(self):
+        return sum([line.units for line in self.lines.all()])
 
     def __str__(self):
         return "Order #{id}. {price}€".format(id=self.pk, price=self.total_price)
