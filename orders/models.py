@@ -1,8 +1,17 @@
 # coding: utf-8
+from io import StringIO
+
 from django.core import validators
+from django.core.mail import EmailMessage
 from django.db import models
 from django.contrib.auth import models as auth_models
+from django.db.models import Q
+from django.db.models.signals import post_save
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+
+import csv
 
 
 class Order(models.Model):
@@ -19,19 +28,39 @@ class Order(models.Model):
     def total_items(self):
         return sum([line.units for line in self.lines.all()])
 
-    def __str__(self):
-        return "Order #{id}. {price}€".format(id=self.pk, price=self.total_price)
+    def get_csv(self):
+        with StringIO() as csv_file:
+            writer = csv.writer(csv_file, quoting=csv.QUOTE_NONNUMERIC)
+            fields = ["product", "units", "client_id", "client_first_name", "client_last_name", "client_email",
+                      "line_price"]
+            writer.writerow(fields)
+
+            for line in self.lines.all():
+                writer.writerow([
+                    line.product.name,
+                    line.units,
+                    self.client.pk,
+                    self.client.first_name,
+                    self.client.last_name,
+                    self.client.email,
+                    line.total
+                ])
+            return csv_file.getvalue()
 
     def send_email(self):
-        pass
+        email = EmailMessage(
+            subject="[Bernini Shop] New order #{0}".format(self.pk),
+            body=render_to_string('mails/new_order.txt', {"order": self}),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[
+                u.email for u in auth_models.User.objects.filter(Q(is_staff=True) | Q(is_superuser=True))
+            ]
+        )
+        email.attach('order.csv', self.get_csv(), 'text/csv')
+        email.send(fail_silently=True)
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None, send_email=True):
-
-        if self.pk is None and send_email:
-            self.send_email()
-
-        super().save(force_insert, force_update, using, update_fields)
+    def __str__(self):
+        return "Order #{id}. {price}€".format(id=self.pk, price=self.total_price)
 
     class Meta:
         verbose_name = _('Order')
